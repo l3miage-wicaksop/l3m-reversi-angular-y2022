@@ -72,7 +72,17 @@ ${this.whereCanPlay().map( P => `  * ${P}`).join("\n")}
     }
   }
 
+  //_______________________________________________________________________________________________________
   //__________________________________________ MODIFICATIONS ICI __________________________________________
+  //_______________________________________________________________________________________________________
+
+  /**
+   * initBoard initialise un nouveau plateau à l'état initiale (2 pions de chaque couleurs).\
+   * Initialise aussi le joueur courant.
+   */
+   private initBoard(): void {
+  }
+
   /**
    * Renvoie la liste des positions qui seront prises si on pose un pion du joueur courant en position i,j
    * @param i Indice de la ligne où poser le pion
@@ -100,13 +110,6 @@ ${this.whereCanPlay().map( P => `  * ${P}`).join("\n")}
    * @param j L'indice de la colonen où poser le pion.
    */
   private tryPlay(i: number, j: number): void {
-  }
-
-  /**
-   * initBoard initialise un nouveau plateau à l'état initiale (2 pions de chaque couleurs).\
-   * Initialise aussi le joueur courant.
-   */
-  private initBoard(): void {
   }
 
 }
