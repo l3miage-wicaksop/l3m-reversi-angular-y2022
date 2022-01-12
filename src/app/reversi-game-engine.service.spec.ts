@@ -1,7 +1,38 @@
 import { TestBed } from '@angular/core/testing';
 
 import { ReversiGameEngineService } from './reversi-game-engine.service';
-import { Board, BoardtoString, Board_RO, C, charToTurn, getEmptyBoard, L, R, stringToBoard, TileCoords, Turn } from './ReversiDefinitions';
+import { Board, Board_RO, C, getEmptyBoard, L, R, TileCoords, Turn } from './ReversiDefinitions';
+
+function charToTurn(c: string): Turn {
+  return c === 'X' ? 'Player1' : 'Player2';
+}
+
+function chatToC(c: string): C {
+  return c === '.' ? 'Empty' : charToTurn(c);
+}
+
+function stringToBoard(str: string): Board {
+  return str.trim().split("\n").map(
+      s => s.trim().split('').map( chatToC ) as L
+  ) as Board;
+}
+
+function cToString(c: C): string {
+	switch(c) {
+		case 'Empty':   return ".";
+		case 'Player1': return "X";
+		case 'Player2': return "O";
+	}
+}
+
+function LtoString(L: R): string {
+	return L.reduce((acc, c) => `${acc}${cToString(c)}`, '');
+}
+
+function BoardtoString(b: Board_RO): string {
+	return b.map( LtoString ).join("\n");
+}
+
 
 describe('ReversiGameEngineService', () => {
   let service: ReversiGameEngineService;
@@ -60,7 +91,7 @@ describe('ReversiGameEngineService', () => {
     const turn = charToTurn('O');
 
     console.log(`------ Situation S1:\n${BoardtoString(board)}`);
-    service.restart(board, turn);
+    service.restart({board, turn});
     const L = service.whereCanPlay();
     expect(L.length).withContext(`Il devrait y avoir 9 coups possibles et pas ${L.length}`).toEqual(9);
     const LOK = [ [1,4], [1,5], [1,6], [2,2], [2,3], [3,2], [4,0], [6,2], [7,0] ];
@@ -82,7 +113,7 @@ describe('ReversiGameEngineService', () => {
                             .O.O....
                             .O..O...`);
     const turn = charToTurn('X');
-    service.restart(board, turn);
+    service.restart({board, turn});
     console.log(`------ Situation S2:\n${BoardtoString(board)}`);
     const L = service.whereCanPlay();
     expect(L.length).withContext(`Il devrait y avoir 0 coups possibles et pas ${L.length}`).toEqual(0);
@@ -99,7 +130,7 @@ describe('ReversiGameEngineService', () => {
                             ........`);
     const turn = charToTurn('O');
     console.log(`------ Situation S3:\n${BoardtoString(board)}`);
-    service.restart(board, turn);
+    service.restart({board, turn});
     const L = service.whereCanPlay();
     expect(L.length).withContext(`Il devrait y avoir 8 coups possibles et pas ${L.length}`).toEqual(8);
     const LOK = [ [0,3], [0,7], [1,0], [4,0], [4,7], [7,0], [7,3], [7,6] ];
@@ -122,7 +153,7 @@ describe('ReversiGameEngineService', () => {
                             ........`);
     const turn = charToTurn('O');
     console.log(`------ Situation S4:\n${BoardtoString(board)}`);
-    service.restart(board, turn);
+    service.restart({board, turn});
 
     const L = service.whereCanPlay();
     expect(L.length).withContext(`Il devrait y avoir 1 coups possibles et pas ${L.length}`).toEqual(1);
@@ -162,7 +193,7 @@ describe('ReversiGameEngineService', () => {
         ........`
     ].map<Board>( stringToBoard );
 
-    service.restart(P1[0], 'Player2');
+    service.restart({board: P1[0], turn: 'Player2'});
     console.log( `---------- P1, step 0:\n${P1[0]}`);
     service.play(4,6);
     console.log( `---------- P1, step 1, after O plays at [4,6]:\n${BoardtoString(service.board)}`);
