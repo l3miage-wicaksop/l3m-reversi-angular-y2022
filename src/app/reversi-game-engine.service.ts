@@ -16,7 +16,7 @@ export class ReversiGameEngineService implements ReversiModelInterface {
   // NE PAS MODIFIER
   constructor() {
       this.restart();
-      // NE PAS TOUCHER, POUR LE SEBUG DANS LA CONSOLE
+      // NE PAS TOUCHER, POUR LE DEBUG DANS LA CONSOLE
       (window as any).RGS = this;
       console.log("Utilisez RGS pour accéder à l'instance de service ReversiGameEngineService.\nExemple : RGS.résuméDebug()")
   }
@@ -81,7 +81,7 @@ ${this.whereCanPlay().map( P => `  * ${P}`).join("\n")}
   //_______________________________________________________________________________________________________
 
   /**
-   * initBoard initialise un nouveau plateau à l'état initiale (2 pions de chaque couleurs).\
+   * initGameState initialise un nouveau plateau à l'état initiale (2 pions de chaque couleurs).\
    * Initialise aussi le joueur courant.
    * @returns L'état initiale du jeu, avec les 4 pions initiaux bien placés.
    */
