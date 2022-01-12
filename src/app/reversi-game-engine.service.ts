@@ -36,11 +36,11 @@ ${this.whereCanPlay().map( P => `  * ${P}`).join("\n")}
 
   // NE PAS MODIFIER
   get turn(): Turn {
-    return this.currentTurn;
+    return this.gameStateSubj.value.turn;
   }
 
   get board(): Board_RO {
-    return this._board;
+    return this.gameStateSubj.value.board;
   }
 
   // NE PAS MODIFIER
@@ -115,7 +115,7 @@ ${this.whereCanPlay().map( P => `  * ${P}`).join("\n")}
    * @param j L'indice de la colonen où poser le pion.
    */
   private tryPlay(i: number, j: number): GameState {
-    return {turn: this.turn, board: this.board};c
+    return {turn: this.turn, board: this.board};
   }
 
   /**
