@@ -9,7 +9,7 @@ export type Board = [L, L, L, L, L, L, L, L];             // Le plateau
 export type R        = readonly [C, C, C, C, C, C, C, C]; // Une ligne immuable
 export type Board_RO = readonly [R, R, R, R, R, R, R, R]; // Un plateau immuable
 
-export type TileCoords = readonly [x: number, y: number]; // Une coordonnée
+export type TileCoords = readonly [i: number, j: number]; // Une coordonnée
 export type PlayImpact = readonly TileCoords[];           // Une liste de coordonnées
 
 export interface GameState {                              // Un état de jeu
