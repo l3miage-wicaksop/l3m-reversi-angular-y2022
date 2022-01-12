@@ -83,6 +83,7 @@ ${this.whereCanPlay().map( P => `  * ${P}`).join("\n")}
   /**
    * initBoard initialise un nouveau plateau à l'état initiale (2 pions de chaque couleurs).\
    * Initialise aussi le joueur courant.
+   * @returns L'état initiale du jeu, avec les 4 pions initiaux bien placés.
    */
   private initGameState(): GameState {
     return {turn: this.turn, board: this.board};
@@ -113,6 +114,7 @@ ${this.whereCanPlay().map( P => `  * ${P}`).join("\n")}
    * Sinon les positions sont prises et le tour de jeu change.
    * @param i L'indice de la ligne où poser le pion.
    * @param j L'indice de la colonen où poser le pion.
+   * @returns Le nouvel état de jeu si le joueur courant joue en i,j, l'ancien état si il ne peut pas jouer en i,j
    */
   private tryPlay(i: number, j: number): GameState {
     return {turn: this.turn, board: this.board};
