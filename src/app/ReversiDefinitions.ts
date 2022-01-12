@@ -9,7 +9,7 @@ export type Board = [L, L, L, L, L, L, L, L];             // Le plateau
 export type R        = readonly [C, C, C, C, C, C, C, C]; // Une ligne immuable
 export type Board_RO = readonly [R, R, R, R, R, R, R, R]; // Un plateau immuable
 
-export type TileCoords = readonly [i: number, j: number]; // Une coordonnée
+export type TileCoords = readonly [x: number, y: number]; // Une coordonnée
 export type PlayImpact = readonly TileCoords[];           // Une liste de coordonnées
 
 export interface GameState {                              // Un état de jeu
@@ -20,10 +20,10 @@ export interface GameState {                              // Un état de jeu
 export interface ReversiModelInterface {                  // Le modèle du jeu Reversi, au sens MVP/MVC
     readonly board: Board_RO                              // Le plateau de jeu courant exposé en tant qu'objet immuable
     readonly turn: Turn                                   // Le joueur courant
-    PionsTakenIfPlayAt(i: number, j: number): PlayImpact; // La liste des coordonnées des pions pris à l'adversaire si le joueur joue en i,j
+    PionsTakenIfPlayAt(i: number, j: number): PlayImpact; // La liste des coordonnées des pions pris à l'adversaire
     whereCanPlay(): readonly TileCoords[]                 // Liste des positions jouable par le joueur courant
     play(i: number, j: number): void;                     // Joueur courant joue en <i, j>
-    restart(board?: Board_RO, turn?: Turn): void;         // Redémarre une partie à l'état initiale ou à l'état board / turn
+    restart(gs: Partial<GameState>): void;                // Redémarre une partie à l'état initiale ou à l'état board / turn
 
     gameStateObs: Observable<GameState>;                  // Un observable de l'état courant du jeu
 }
