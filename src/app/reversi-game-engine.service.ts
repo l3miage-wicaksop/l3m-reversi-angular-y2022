@@ -7,11 +7,9 @@ import { Board, BoardtoString, Board_RO, C, charToTurn, GameState, getEmptyBoard
 })
 export class ReversiGameEngineService implements ReversiModelInterface {
   // NE PAS MODIFIER
-  protected _board: Board = getEmptyBoard();
-  protected currentTurn: Turn = 'Player1';
   protected gameStateSubj = new BehaviorSubject<GameState>({
-    board: this._board,
-    turn: this.currentTurn
+    board: getEmptyBoard(),
+    turn: 'Player1'
   });
   public readonly gameStateObs: Observable<GameState> = this.gameStateSubj.asObservable();
 
@@ -46,29 +44,35 @@ ${this.whereCanPlay().map( P => `  * ${P}`).join("\n")}
   }
 
   // NE PAS MODIFIER
-  restart(board?: Board_RO, turn?: Turn): void {
-      this.initBoard();
-      if (!!board) {
-        this._board = board.map( L => L.map( c => c) ) as Board;
-      }
-      if (!!turn) {
-        this.currentTurn = turn;
-      }
+  restart( {turn, board}: Partial<GameState> = {} ): void {
+      const gs = this.initGameState();
+      let newBoard: Board;
+      let newTurn: Turn;
+
+      newBoard = !!board ? board.map( L => [...L] ) as Board : gs.board as Board;
+      newTurn = turn ?? gs.turn;
+
       this.gameStateSubj.next({
-        turn: this.currentTurn,
-        board: this._board
+        turn: newTurn,
+        board: newBoard
       });
   }
 
   // NE PAS MODIFIER
   play(i: number, j: number): void {
-    const b = this._board;
-    this.tryPlay(i, j);
-    if (b !== this._board) {
+    const {board: b1, turn: t1} = this.gameStateSubj.value;
+    const {board: b2, turn: t2} = this.tryPlay(i, j);
+    if (b1 !== b2 || t1 !== t2) {
       this.gameStateSubj.next({
-        turn: this.currentTurn,
-        board: this._board
+        turn: t2,
+        board: b2
       });
+      if (!this.canPlay()) {
+        this.gameStateSubj.next({
+          turn: t2 === 'Player1' ? 'Player2' : 'Player1',
+          board: b2
+        });
+      }
     }
   }
 
@@ -80,7 +84,8 @@ ${this.whereCanPlay().map( P => `  * ${P}`).join("\n")}
    * initBoard initialise un nouveau plateau à l'état initiale (2 pions de chaque couleurs).\
    * Initialise aussi le joueur courant.
    */
-   private initBoard(): void {
+  private initGameState(): GameState {
+    return {turn: this.turn, board: this.board};
   }
 
   /**
@@ -109,7 +114,14 @@ ${this.whereCanPlay().map( P => `  * ${P}`).join("\n")}
    * @param i L'indice de la ligne où poser le pion.
    * @param j L'indice de la colonen où poser le pion.
    */
-  private tryPlay(i: number, j: number): void {
+  private tryPlay(i: number, j: number): GameState {
+    return {turn: this.turn, board: this.board};c
   }
 
+  /**
+   * @returns vrai si le joueur courant peut jouer quelque part, faux sinon.
+   */
+  private canPlay(): boolean {
+      return false;
+  }
 }
