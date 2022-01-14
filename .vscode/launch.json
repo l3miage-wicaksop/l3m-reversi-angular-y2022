@@ -4,6 +4,15 @@
     // Pour plus d'informations, visitez : https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+      {
+        "name": "Launch Firefox against localhost",
+        "type": "firefox",
+        "request": "launch",
+        "reAttach": true,
+        "url": "http://localhost:4200",
+        "webRoot": "${workspaceFolder}"
+      },
+
         {
             "type": "pwa-chrome",
             "request": "launch",
