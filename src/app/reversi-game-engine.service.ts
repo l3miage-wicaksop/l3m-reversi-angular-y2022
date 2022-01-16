@@ -149,13 +149,12 @@ ${this.whereCanPlay().map( P => `  * ${P}`).join("\n")}
               break;
           }
 
-          if(this.board[dx][dy] === 'Empty') break; // pas besoin de verifier les directions vide
+          if(this.board[dx]?.[dy] === 'Empty') break; // pas besoin de verifier les directions vide
           
           
-          // if (this.board[dx][dy] === opponent && this.board[dx][dy] !== 'Empty') tmpLst.push([dx,dy]) // ajoute des pions adversaires
-          if (this.board[dx][dy] === opponent && this.board[dx][dy] !== 'Empty') tmpLst.push([dx,dy]) // ajoute des pions adversaires
+          if (this.board[dx]?.[dy] === opponent && this.board[dx][dy] !== 'Empty') tmpLst.push([dx,dy]) // ajoute les pions adversaires
 
-          if(this.board[dx][dy] === this.turn && tmpLst.length>0){
+          if(this.board[dx]?.[dy] === this.turn && tmpLst.length>0){
             lst = lst.concat(tmpLst) ; 
             break; // si on a trouvé le pion de notre
           } 
