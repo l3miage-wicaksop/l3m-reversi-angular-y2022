@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Board, BoardtoString, Board_RO, C, charToTurn, GameState, getEmptyBoard, PlayImpact, ReversiModelInterface, TileCoords, Turn } from './ReversiDefinitions';
+import { Board, BoardtoString, Board_RO, C, charToTurn, cToString, GameState, getEmptyBoard, PlayImpact, ReversiModelInterface, TileCoords, Turn } from './ReversiDefinitions';
 
 @Injectable({
   providedIn: 'root'
@@ -86,8 +86,17 @@ ${this.whereCanPlay().map( P => `  * ${P}`).join("\n")}
    * @returns L'état initiale du jeu, avec les 4 pions initiaux bien placés.
    */
   private initGameState(): GameState {
-    return {turn: this.turn, board: this.board};
+    let tmpBoard = getEmptyBoard()
+
+    tmpBoard[3][3] = tmpBoard[4][4] = 'Player2'
+    tmpBoard[4][3] = tmpBoard[3][4] = 'Player1'
+     
+
+    // return {turn: this.turn, board: this.board};
+    return {turn: this.turn, board: tmpBoard};
   }
+
+
 
   /**
    * Renvoie la liste des positions qui seront prises si on pose un pion du joueur courant en position i,j
@@ -96,7 +105,71 @@ ${this.whereCanPlay().map( P => `  * ${P}`).join("\n")}
    * @returns Une liste des positions qui seront prise si le pion est posée en x,y
    */
   PionsTakenIfPlayAt(i: number, j: number): PlayImpact {
-      return [];
+    
+      let lst:PlayImpact = [];
+
+      let opponent:Turn = this.turn === 'Player1' ? 'Player2' : 'Player1'
+
+      for(let dir = 0 ; dir<8; dir++){ // il s'agit de 8 directions possible
+        let tmpLst: TileCoords[] =[];
+        
+        let dx = i;
+        let dy = j;
+
+        
+        while( (dx>=0 && dx < 8) && (dy>=0 && dy<8) ){ // pour ne pas depasser les bords
+          switch(dir){
+            case 0:  // case 0 : droite
+              dx++;
+              break;
+            case 1 : // case 1 : droite bas
+              dx++;
+              dy++;
+              break;
+            case 2 : // case 2 : bas
+              dy++;
+              break;
+            case 3: // case 3 : bas gauche
+              dy++;
+              dx--;
+              break;
+            case 4: // case 4 : gauche
+              dx--;
+              break;
+            case 5: // case 5 : haute gauche
+              dx--;
+              dy--;
+              break;
+            case 6: // case 6 : haute
+              dy--;
+              break;
+            case 7: // case 7 : haute droite
+              dx++;
+              dy--;
+              break;
+          }
+
+          if(this.board[dx][dy] === 'Empty') break; // pas besoin de verifier les directions vide
+          
+          
+          // if (this.board[dx][dy] === opponent && this.board[dx][dy] !== 'Empty') tmpLst.push([dx,dy]) // ajoute des pions adversaires
+          if (this.board[dx][dy] === opponent && this.board[dx][dy] !== 'Empty') tmpLst.push([dx,dy]) // ajoute des pions adversaires
+
+          if(this.board[dx][dy] === this.turn && tmpLst.length>0){
+            lst = lst.concat(tmpLst) ; 
+            break; // si on a trouvé le pion de notre
+          } 
+          
+
+        }
+        console.log("voici la liste tmp: " + tmpLst)
+        
+        
+      }
+      
+      console.log("liste finale" + lst)
+      
+      return lst;
   }
 
   /**
@@ -105,7 +178,15 @@ ${this.whereCanPlay().map( P => `  * ${P}`).join("\n")}
    * @returns liste des positions jouables par le joueur courant.
    */
   whereCanPlay(): readonly TileCoords[] {
-    return [];
+    const L: TileCoords[] = [];
+    for (let i = 0; i < this.board.length; i++) {
+      for (let j = 0; j < this.board[i].length; j++) {
+        if (this.PionsTakenIfPlayAt(i, j).length > 0) {
+          L.push( [i, j] );
+        }
+      }
+    }
+    return L;
   }
 
   /**
