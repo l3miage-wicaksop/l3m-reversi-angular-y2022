@@ -93,7 +93,7 @@ ${this.whereCanPlay().map( P => `  * ${P}`).join("\n")}
      
 
     // return {turn: this.turn, board: this.board};
-    return {turn: this.turn, board: tmpBoard};
+    return {turn: 'Player1', board: tmpBoard};
   }
 
 
@@ -107,12 +107,8 @@ ${this.whereCanPlay().map( P => `  * ${P}`).join("\n")}
   PionsTakenIfPlayAt(i: number, j: number): PlayImpact {
     
       let lst:PlayImpact = [];
-
       let opponent:Turn = this.turn === 'Player1' ? 'Player2' : 'Player1'
-      
       let directionMatrix = [[1,0], [1,1], [0,1], [-1,1], [-1,0], [-1,-1], [0,-1], [1,-1] ]
-      
-
 
       directionMatrix.forEach(([dx,dy]) =>
         {
@@ -168,13 +164,31 @@ ${this.whereCanPlay().map( P => `  * ${P}`).join("\n")}
    * @returns Le nouvel état de jeu si le joueur courant joue en i,j, l'ancien état si il ne peut pas jouer en i,j
    */
   private tryPlay(i: number, j: number): GameState {
-    return {turn: this.turn, board: this.board};
+    
+    let placesPossibles = this.PionsTakenIfPlayAt(i,j)
+    let opponent:Turn = this.turn === 'Player1' ? 'Player2' : 'Player1'
+    let nextBoard:Board = this.board.map( e => e.slice() ) as Board;
+
+    nextBoard[i][j] = this.turn
+
+    if(placesPossibles.length > 0){
+      placesPossibles.forEach(([di,dj]) => {
+        nextBoard[di][dj] = this.turn
+      })
+      return {turn: opponent, board: nextBoard}
+    } 
+    
+    return {turn: this.turn , board: this.board}
+    
+    
+    
+    
   }
 
   /**
    * @returns vrai si le joueur courant peut jouer quelque part, faux sinon.
    */
   private canPlay(): boolean {
-      return false;
+      return this.whereCanPlay().length > 0;
   }
 }
