@@ -109,65 +109,34 @@ ${this.whereCanPlay().map( P => `  * ${P}`).join("\n")}
       let lst:PlayImpact = [];
 
       let opponent:Turn = this.turn === 'Player1' ? 'Player2' : 'Player1'
+      
+      let directionMatrix = [[1,0], [1,1], [0,1], [-1,1], [-1,0], [-1,-1], [0,-1], [1,-1] ]
+      
 
-      for(let dir = 0 ; dir<8; dir++){ // il s'agit de 8 directions possible
-        let tmpLst: TileCoords[] =[];
-        
-        let dx = i;
-        let dy = j;
 
-        
-        while( (dx>=0 && dx < 8) && (dy>=0 && dy<8) ){ // pour ne pas depasser les bords
-          switch(dir){
-            case 0:  // case 0 : droite
-              dx++;
-              break;
-            case 1 : // case 1 : droite bas
-              dx++;
-              dy++;
-              break;
-            case 2 : // case 2 : bas
-              dy++;
-              break;
-            case 3: // case 3 : bas gauche
-              dy++;
-              dx--;
-              break;
-            case 4: // case 4 : gauche
-              dx--;
-              break;
-            case 5: // case 5 : haute gauche
-              dx--;
-              dy--;
-              break;
-            case 6: // case 6 : haute
-              dy--;
-              break;
-            case 7: // case 7 : haute droite
-              dx++;
-              dy--;
-              break;
+      directionMatrix.forEach(([dx,dy]) =>
+        {
+          let tmpLst: TileCoords[] =[];
+          let x:number = i
+          let y:number = j
+          while((x >=0 && x < 8) && (y>=0 && y<8) && this.board[i]?.[j] === 'Empty'){ // on peut mettre un pion que dans une case vide et dans le tableau (de taille 8x8)
+           
+            x += dx;
+            y += dy;
+            
+            if(this.board[x]?.[y] === 'Empty' ) break; // pas besoin de verifier les directions vide
+
+            if (this.board[x]?.[y] === opponent && this.board[x]?.[y] !== this.turn ) tmpLst.push([x,y]) // ajoute les pions adversaires
+
+            if(this.board[x]?.[y] === this.turn && tmpLst.length>0){
+              lst = lst.concat(tmpLst) ; 
+              break; // si on a trouvé le pion de notre
+            } 
+              
           }
-
-          if(this.board[dx]?.[dy] === 'Empty') break; // pas besoin de verifier les directions vide
-          
-          
-          if (this.board[dx]?.[dy] === opponent && this.board[dx][dy] !== 'Empty') tmpLst.push([dx,dy]) // ajoute les pions adversaires
-
-          if(this.board[dx]?.[dy] === this.turn && tmpLst.length>0){
-            lst = lst.concat(tmpLst) ; 
-            break; // si on a trouvé le pion de notre
-          } 
-          
-
         }
-        console.log("voici la liste tmp: " + tmpLst)
-        
-        
-      }
-      
-      console.log("liste finale" + lst)
-      
+      )
+    
       return lst;
   }
 
@@ -181,10 +150,12 @@ ${this.whereCanPlay().map( P => `  * ${P}`).join("\n")}
     for (let i = 0; i < this.board.length; i++) {
       for (let j = 0; j < this.board[i].length; j++) {
         if (this.PionsTakenIfPlayAt(i, j).length > 0) {
+          
           L.push( [i, j] );
         }
       }
     }
+    console.log("where can play: " + L)
     return L;
   }
 
