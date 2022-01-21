@@ -151,7 +151,7 @@ ${this.whereCanPlay().map( P => `  * ${P}`).join("\n")}
         }
       }
     }
-    console.log("where can play: " + L)
+    
     return L;
   }
 
