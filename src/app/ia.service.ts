@@ -17,6 +17,7 @@ export class IaService {
         let randomCasePicked = RGS.whereCanPlay()[Math.floor(Math.random() * RGS.whereCanPlay.length)]
       RGS.play(randomCasePicked[0], randomCasePicked[1])
       RGS.résuméDebug()
+      console.log("jouer en tapant RGS.play(i,j) où i et j est l'indice de plateau du jeu\n")
       }
       
 
