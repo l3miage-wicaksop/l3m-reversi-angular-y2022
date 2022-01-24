@@ -1,6 +1,17 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { Board, BoardtoString, Board_RO, C, charToTurn, cToString, GameState, getEmptyBoard, PlayImpact, ReversiModelInterface, TileCoords, Turn } from './ReversiDefinitions';
+import { Injectable, NgZone } from '@angular/core';
+import { BehaviorSubject, Observable, OperatorFunction, share } from 'rxjs';
+import { Board, BoardtoString, Board_RO, C, charToTurn, GameState, getEmptyBoard, PlayImpact, ReversiModelInterface, TileCoords, Turn } from './ReversiDefinitions';
+
+export function runInZone<T>(zone: NgZone): OperatorFunction<T, T> {
+  return (source) => {
+    return new Observable(observer => {
+      const next     = (value: T)   => zone.run(() => observer.next(value));
+      const error    = (e: unknown) => zone.run(() => observer.error(e)   );
+      const complete = ()           => zone.run(() => observer.complete() );
+      return source.subscribe({next, error, complete});
+    });
+  };
+}
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +25,14 @@ export class ReversiGameEngineService implements ReversiModelInterface {
   public readonly gameStateObs: Observable<GameState> = this.gameStateSubj.asObservable();
 
   // NE PAS MODIFIER
-  constructor() {
+  constructor(private ngz: NgZone) {
       this.restart();
+      this.gameStateObs = this.gameStateSubj.asObservable().pipe(
+        runInZone(ngz),
+        share({
+          connector: () => new BehaviorSubject( this.gameStateSubj.value )
+        })
+      );
       // NE PAS TOUCHER, POUR LE DEBUG DANS LA CONSOLE
       (window as any).RGS = this;
       console.log("Utilisez RGS pour accéder à l'instance de service ReversiGameEngineService.\nExemple : RGS.résuméDebug()")
